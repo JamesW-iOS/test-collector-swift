@@ -84,7 +84,7 @@ private func getInfoDictionaryValue(key: String) -> String? {
 
 private func getEnvironmentInfoDictionaryValue(key: String) -> String? {
   let bundle = Bundle.allBundles.first(where: { $0.bundlePath.hasSuffix(".xctest") }) ?? .main
-  bundle.environmentDictionary[key] as? String
+  return bundle.environmentDictionary[key] as? String
 }
 
 extension Bundle {
