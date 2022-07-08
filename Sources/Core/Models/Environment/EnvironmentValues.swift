@@ -5,15 +5,18 @@ struct EnvironmentValues {
 
   private let getFromEnvironment: (String) -> String?
   private let getFromInfoDictionary: (String) -> String?
+  private let getEnvironmentInfoDictionary: (String) -> String?
 
   init(
     values: [String: String] = [:],
     getFromEnvironment: @escaping (String) -> String? = getEnvironmentValue,
-    getFromInfoDictionary: @escaping (String) -> String? = getInfoDictionaryValue
+    getFromInfoDictionary: @escaping (String) -> String? = getInfoDictionaryValue,
+    getEnvironmentInfoDictionary: @escaping (String) -> String? = getEnvironmentInfoDictionaryValue
   ) {
     self.values = values
     self.getFromEnvironment = getFromEnvironment
     self.getFromInfoDictionary = getFromInfoDictionary
+    self.getEnvironmentInfoDictionary = getEnvironmentInfoDictionary
   }
 
   func bool(for key: String) -> Bool? {
@@ -25,6 +28,7 @@ struct EnvironmentValues {
       let value = self.values[key]
       ?? self.getFromEnvironment(key)
       ?? self.getFromInfoDictionary(key)
+      ?? self.getEnvironmentInfoDictionary(key)
     else { return nil }
     return value.trimmingCharacters(in: .whitespacesAndNewlines)
   }
@@ -76,4 +80,21 @@ private func getEnvironmentValue(key: String) -> String? {
 
 private func getInfoDictionaryValue(key: String) -> String? {
   Bundle.main.infoDictionary?[key] as? String
+}
+
+private func getEnvironmentInfoDictionaryValue(key: String) -> String? {
+  Bundle.main.environmentDictionary[key]
+}
+
+private extension Bundle {
+  var environmentDictionary: [String: String] {
+    guard let url = self.url(forResource: "environment", withExtension: "plist"),
+          let data = try? Data(contentsOf: url),
+          let array = try? PropertyListSerialization.propertyList(from: data, format: nil) as? [String: String]
+    else {
+      return [:]
+    }
+
+    return array
+  }
 }
