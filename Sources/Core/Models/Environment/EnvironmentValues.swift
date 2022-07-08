@@ -83,14 +83,15 @@ private func getInfoDictionaryValue(key: String) -> String? {
 }
 
 private func getEnvironmentInfoDictionaryValue(key: String) -> String? {
-  Bundle.main.environmentDictionary[key]
+  let bundle = Bundle.allBundles.first(where: { $0.bundlePath.hasSuffix(".xctest") }) ?? .main
+  return bundle.environmentDictionary[key] as? String
 }
 
 extension Bundle {
-  var environmentDictionary: [String: String] {
+  var environmentDictionary: [String: Any] {
     guard let url = self.url(forResource: "environment", withExtension: "plist"),
           let data = try? Data(contentsOf: url),
-          let array = try? PropertyListSerialization.propertyList(from: data, format: nil) as? [String: String]
+          let array = try? PropertyListSerialization.propertyList(from: data, format: nil) as? [String: Any]
     else {
       return [:]
     }
