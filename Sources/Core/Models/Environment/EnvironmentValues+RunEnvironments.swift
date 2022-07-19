@@ -86,7 +86,7 @@ extension EnvironmentValues {
 
     return RunEnvironment(
       ci: "github_actions",
-      key: "Test Name",
+      key: "\(action)-\(runNumber)-\(runAttempt)",
       url: url,
       branch: self.gitHubRef,
       commitSha: self.gitHubSha,
