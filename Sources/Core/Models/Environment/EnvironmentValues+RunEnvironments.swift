@@ -90,7 +90,8 @@ extension EnvironmentValues {
       url: url,
       branch: self.gitHubRef,
       commitSha: self.gitHubSha,
-      number: runNumber
+      number: runNumber,
+      message: "Some message"
     )
   }
 }
