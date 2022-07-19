@@ -24,6 +24,9 @@ extension EnvironmentValues {
 
   private var buildKite: RunEnvironment? {
     guard let buildId = self.buildkiteBuildId else { return nil }
+
+    logger?.debug("Successfully found Buildkite RunEnvironment")
+
     return RunEnvironment(
       ci: "buildkite",
       key: buildId,
@@ -41,6 +44,9 @@ extension EnvironmentValues {
       let buildNumber = self.circleBuildNumber,
       let workFlowId = self.circleWorkflowId
     else { return nil }
+
+    logger?.debug("Successfully found Circle CI RunEnvironment")
+
     return RunEnvironment(
       ci: "circleci",
       key: "\(workFlowId)-\(buildNumber)",
@@ -53,6 +59,9 @@ extension EnvironmentValues {
 
   private func generic(key: String) -> RunEnvironment? {
     guard self.ci != nil else { return nil }
+
+    logger?.debug("Falling back to generic RunEnvironment")
+
     return RunEnvironment(
       ci: "generic",
       key: key
@@ -70,6 +79,10 @@ extension EnvironmentValues {
     if let repository = self.gitHubRepository, let runId = self.gitHubRunId {
       url = "https://github.com/\(repository)/actions/runs/\(runId)"
     }
+
+    logger?.debug("Successfully found Github RunEnvironment")
+    logger?.debug("Run number: \(runNumber)\nAction: \(action)\nRun Attempt: \(runAttempt)")
+
 
     return RunEnvironment(
       ci: "github_actions",
